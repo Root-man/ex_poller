@@ -1,0 +1,12 @@
+defmodule ExPollerWeb.ErrorJSONTest do
+  use ExPollerWeb.ConnCase, async: true
+
+  test "renders 404" do
+    assert ExPollerWeb.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
+  end
+
+  test "renders 500" do
+    assert ExPollerWeb.ErrorJSON.render("500.json", %{}) ==
+             %{errors: %{detail: "Internal Server Error"}}
+  end
+end
