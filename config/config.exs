@@ -8,6 +8,7 @@
 import Config
 
 config :ex_poller,
+  ecto_repos: [ExPoller.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
@@ -19,7 +20,7 @@ config :ex_poller, ExPollerWeb.Endpoint,
     layout: false
   ],
   pubsub_server: ExPoller.PubSub,
-  live_view: [signing_salt: "V4V6cg41"]
+  live_view: [signing_salt: "57FmvWux"]
 
 # Configures the mailer
 #
@@ -42,7 +43,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.0",
+  version: "3.4.3",
   ex_poller: [
     args: ~w(
       --config=tailwind.config.js

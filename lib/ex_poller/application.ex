@@ -9,6 +9,7 @@ defmodule ExPoller.Application do
   def start(_type, _args) do
     children = [
       ExPollerWeb.Telemetry,
+      ExPoller.Repo,
       {DNSCluster, query: Application.get_env(:ex_poller, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: ExPoller.PubSub},
       # Start the Finch HTTP client for sending emails

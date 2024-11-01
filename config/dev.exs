@@ -1,5 +1,15 @@
 import Config
 
+# Configure your database
+config :ex_poller, ExPoller.Repo,
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  database: "ex_poller_dev",
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -13,7 +23,7 @@ config :ex_poller, ExPollerWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "30UDksMG8t2oJJfURm7Y+yRE76q1cEh1Zr070ZFbvaTT/EIpetxk3tnqpI8aiBp9",
+  secret_key_base: "x9qKpYQv+zxB39kpvou3J2CmPKXEpnULla4boLzUiaQ88Pser9Z6Bo5u6ff+yXrB",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:ex_poller, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:ex_poller, ~w(--watch)]}
@@ -65,8 +75,11 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-# Include HEEx debug annotations as HTML comments in rendered markup
-config :phoenix_live_view, :debug_heex_annotations, true
+config :phoenix_live_view,
+  # Include HEEx debug annotations as HTML comments in rendered markup
+  debug_heex_annotations: true,
+  # Enable helpful, but potentially expensive runtime checks
+  enable_expensive_runtime_checks: true
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false

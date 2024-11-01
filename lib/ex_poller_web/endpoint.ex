@@ -7,7 +7,7 @@ defmodule ExPollerWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_ex_poller_key",
-    signing_salt: "EPuF1sPJ",
+    signing_salt: "RIJy7+iQ",
     same_site: "Lax"
   ]
 
@@ -31,6 +31,7 @@ defmodule ExPollerWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :ex_poller
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,
