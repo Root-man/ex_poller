@@ -3,10 +3,10 @@ defmodule ExPollerWeb.Polls.DetailsLive do
 
   def render(assigns) do
     ~H"""
-    <div class="block mx-auto p-8 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 divide-y">
+    <div class="block mx-auto p-8 bg-white border border-gray-200 rounded-lg shadow divide-y">
       <div>
         <div class="flex items-center justify-between">
-          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
             <%= @poll.title %>
           </h5>
           <.link
@@ -19,7 +19,7 @@ defmodule ExPollerWeb.Polls.DetailsLive do
         <p class="text-green-500 text-nowrap font-semibold pt-4">
           Created by: <%= @poll.user.email %>
         </p>
-        <p class="font-normal text-gray-700 dark:text-gray-400 pb-2">
+        <p class="font-normal text-gray-700 pb-2">
           <%= @poll.description %>
         </p>
       </div>
@@ -27,15 +27,17 @@ defmodule ExPollerWeb.Polls.DetailsLive do
         <%= for option <- @poll.options do %>
           <div class="flex items-center justify-between">
             <dl class="flex-grow p-2">
-              <dt class="text-sm font-medium text-gray-500 dark:text-gray-400"><%= option.text %></dt>
-              <dd class="flex items-center mb-3">
-                <div class="w-full bg-gray-200 rounded h-10 dark:bg-gray-700 me-2">
+              <dt class="text-sm font-medium text-gray-500 pb-2"><%= option.text %></dt>
+              <dd class="relative flex items-center mb-3">
+                <div class="w-full bg-gray-200 rounded h-10 me-2 flex items-center">
                   <div
-                    class="bg-blue-300 h-10 rounded dark:bg-blue-500 flex items-center ps-4"
+                    class="bg-blue-300 h-10 rounded flex items-center ps-4"
                     style={"width: #{option_votes_percentage(option, @total_votes)}%"}
                   >
-                    <%= option.votes_count %> out of <%= @total_votes %>
                   </div>
+                  <p class="absolute inset-0 m-auto w-fit h-fit">
+                    <%= option.votes_count %> out of <%= @total_votes %>
+                  </p>
                 </div>
                 <.button
                   id="vote-button"
@@ -68,7 +70,9 @@ defmodule ExPollerWeb.Polls.DetailsLive do
     option = Enum.at(poll.options, option_idx)
     option = Map.update(option, :votes_count, 0, &(&1 + 1))
     options = List.replace_at(poll.options, option_idx, option)
-    {:noreply, assign(socket, total_votes: total_votes + 1, poll: Map.put(poll, :options, options))}
+
+    {:noreply,
+     assign(socket, total_votes: total_votes + 1, poll: Map.put(poll, :options, options))}
   end
 
   defp load_poll(id) do
