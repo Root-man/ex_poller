@@ -17,12 +17,30 @@ defmodule ExPollerWeb.Polls.DashboardLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto">
-      <div class="grid grid-cols-2 md:grid-cols-2 gap-10">
+    <div class="mx-auto max-w-sm md:max-w-3xl">
+      <div class="pb-4">
+        <.button phx-click={show_modal("create-poll-modal")} class="w-full">Create new poll</.button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <%= for poll <- @polls do %>
           <.poll_card poll={poll} />
         <% end %>
       </div>
+      <.modal id="create-poll-modal">
+        <div class="divide-y grid">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white pb-4">Create a new poll</h3>
+          <div class="py-6">
+            <.simple_form for={@form} phx-change="validate" phx-submit="submit">
+              <.input field={@form[:name]} label="Poll name" />
+              <.input field={@form[:description]} label="Description" />
+
+              <:actions>
+                <.button>Create</.button>
+              </:actions>
+            </.simple_form>
+          </div>
+        </div>
+      </.modal>
     </div>
     """
   end
@@ -45,11 +63,47 @@ defmodule ExPollerWeb.Polls.DashboardLive do
     """
   end
 
+  use Ecto.Schema
+
+  import Ecto.Changeset
+
+  embedded_schema do
+    field(:name, :string)
+    field(:description, :string)
+
+  end
+
+  def changeset(params) do
+    %__MODULE__{}
+    |> cast(params, [:name, :description])
+    |> validate_length(:name, min: 10, max: 255)
+    |> validate_length(:description, max: 500)
+  end
+
+  @spec mount(any(), any(), any()) :: {:ok, any()}
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, polls: @default_polls)}
+    changeset = changeset(%{})
+    form = to_form(changeset)
+    {:ok, assign(socket, polls: @default_polls, form: form, changeset: changeset)}
   end
 
   def handle_event("select-poll", %{"id" => id}, socket) do
     {:noreply, push_navigate(socket, to: ~p"/details/#{id}")}
+  end
+
+  def handle_event("validate", %{"dashboard_live" => params}, socket) do
+    {:noreply, assign(socket, changeset: changeset(params))}
+  end
+
+  def handle_event("submit", %{"dashboard_live" => params}, socket) do
+    changeset = changeset(params)
+
+    if changeset.valid? do
+      dbg(changeset)
+      {:noreply, socket}
+    else
+      dbg(to_form(changeset))
+      {:noreply, assign(socket, changeset: changeset, form: to_form(changeset))}
+    end
   end
 end
